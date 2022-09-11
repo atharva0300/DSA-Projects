@@ -45,3 +45,11 @@
 .snake4{
     position : relative;
 }
+
+#score{
+    position : absolute;
+    top : 30px;
+    left : 200px;
+    color : blue;
+    font-size: 48px;
+}

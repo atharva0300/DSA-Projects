@@ -65,21 +65,29 @@ function getNextDown(y){
 
 
 class Snake{
-    constructor(x , y ){ 
+    constructor(x , y  , id){ 
         console.log('inside snake constructor')
         // create a snake body image here
         let snake = new Image();
-        snake.className = 'snake0';
+        snake.className =  `snake${id}`;
         snake.src = './assets/snake-body.png';
         snake.style.width = '72px';
         snake.style.height = '72px';
         snake.style.top = `${y}px`;
         snake.style.left = `${x}px`;
+        console.log('new node x : ' , x);
+        console.log('new node y : ' , y);
+        console.log('new node id : ' , id);
+        console.log('top : ' , snake.style.top)
+        console.log('left : ' , snake.style.left);
+        console.log('snake : ' , snake);
 
         this.snakeNode = snake;
         this.next = null;
         this.x=parseInt(x);
         this.y=parseInt(y);
+        this.prevX = parseInt(x);
+        this.prevY = parseInt(y);
 
         console.log('initial snakeNode : ' , this.snakeNode);
     
@@ -89,7 +97,7 @@ class Snake{
 class SnakeList{
     constructor(){
         console.log('inside snakeList')
-        let head = new Snake('560' , '110');
+        let head = new Snake('560' , '110' , 0);
 
         console.log(head);
 
@@ -101,10 +109,11 @@ class SnakeList{
         console.log(this.head);
         this.size = 1;
         this.direction = 'right';
+        this.tail = head;
     }
 
     add(){
-        let node = new Snake(x,y);
+        let node = new Snake(this.tail.prevX,this.tail.prevY , this.size);
         
         if(this.head == null){
             this.head = node;
@@ -132,8 +141,9 @@ class SnakeList{
     }
 }
 
-function init() {
+var fruitPoints = []
 
+function createFruit(){
 
     var fruits = ['apple' , 'banana' , 'cherry' , 'grapes' , 'orange' , 'strawberry' , 'watermelon'];
     let number = Math.floor(Math.random()*100)
@@ -144,7 +154,7 @@ function init() {
 
     // creating coordinates for the fruitimage
     
-    let {x : fruitX , y : fruitY} = getRandomPoints();
+    var {x : fruitX , y : fruitY} = getRandomPoints();
 
     console.log('X fruit : ' ,fruitX);
     console.log('Y fruit : ' , -fruitY);
@@ -173,6 +183,35 @@ function init() {
     var holder = document.getElementById('outer');
     holder.appendChild(fruitImage);
 
+    fruitPoints.push(fruitX);
+    fruitPoints.push(fruitY);
+
+    return fruitImage;
+
+}
+
+function deleteFruit(fruitImage){
+    var holder = document.getElementById('outer');
+    holder.removeChild(fruitImage);
+}
+
+var score = 0;
+
+function updateScore(){
+    var scoreBoard =document.getElementById('score');
+    scoreBoard.innerHTML = `Score : ${score}`;
+    score++;
+}
+
+
+function init() {
+    // update the scoreboard
+    updateScore();
+
+    // creating a fruitImage
+    let fruitImage = createFruit();
+    let fruitX = fruitPoints[0];
+    let fruitY = fruitPoints[1];
 
     // Snake
     let ll = new SnakeList();
@@ -182,25 +221,44 @@ function init() {
         if(current==null){
             console.log('current is null');
         }
+
         while(current){
+
+
             // checking direction
             // if right
             if(ll.direction=='right'){
+                let tempX = current.x;
+                let tempY = current.y;
                 current.x = current.x + 105;
                 console.log(current.x);
                 current.snakeNode.style.left = `${current.x}px`;
+                current.prevX = tempX;
+                current.prevY = tempY;
             }else if(ll.direction=='left'){
+                let tempX = current.x;
+                let tempY = current.y;
                 current.x = current.x - 105;
                 console.log(current.x);
                 current.snakeNode.style.left = `${current.x}px`;
+                current.prevX = tempX;
+                current.prevY = tempY;
             }else if(ll.direction=='up'){
+                let tempY = current.y;
+                let tempX = current.x;
                 current.y = current.y - 105;
                 console.log(current.y);
                 current.snakeNode.style.top = `${current.y}px`;
+                current.prevY = tempY;
+                current.prevX = tempX;
             }else if(ll.direction=='down'){
+                let tempY = current.y;
+                let tempX = current.x;
                 current.y = current.y + 105;
                 console.log(current.y);
                 current.snakeNode.style.top = `${current.y}px`;
+                current.prevY = tempY;
+                current.prevX = tempX;
             }
             
             console.log(current.x , fruitX);
@@ -208,9 +266,14 @@ function init() {
 
             let current2 = ll.head;
             if(current2.x==fruitX && current2.y==fruitY){
-                console.log('found the fruit!');
-                
-                clearInterval(myInterval);
+                console.log('found the fruit!');    
+                deleteFruit(fruitImage);
+                let newFruit = createFruit();
+                console.log('new fruit x : ' , newFruit.style.left);
+                fruitX = parseInt(newFruit.style.left.slice(0,-2));
+                fruitY = parseInt(newFruit.style.top.slice(0,-2));
+                fruitImage = newFruit;
+                updateScore();
             }
 
 
