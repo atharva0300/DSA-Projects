@@ -1,0 +1,49 @@
+#outer{
+    width : 1920px;
+    height : 1080px;
+}
+
+.container{
+    display : flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('./assets/jungle.gif');
+}
+
+.header{
+    font-size: 32px;
+}
+
+.image{
+    height : 960px;
+    width : 960px;
+    margin-top : -10px;
+}
+
+.fruit{
+    position : absolute;
+    top : 845px;
+    left : 1295px;
+}
+
+
+.snake0{
+    position : absolute;
+}
+
+.snake1{
+    position : relative;
+}
+
+.snake2{
+    position : relative;
+}
+
+.snake3{
+    position : relative;
+}
+
+.snake4{
+    position : relative;
+}
